@@ -24,15 +24,15 @@ public class UserService {
     private UserRepository userRepository;
 
     public ResponseEntity<Object> login(UserLoginCommand command) {
-        //log.debug("About to process [{}]", command);
+        log.debug("About to process [{}]", command);
         User u = userRepository.findByEmail(command.getEmail());
         if (u == null) {
-            // log.info("Cannot find user with email={}", command.getEmail());
+             log.info("Cannot find user with email={}", command.getEmail());
 
             return ResponseEntity.badRequest().body(buildNotifyResponse("Dirección de correo no válida."));
         } else {
             if (u.getPassword().equals(command.getPassword())) {
-                //  log.info("Successful login for user={}", user.getId());
+                  log.info("Successful login for user={}", u.getId());
 
                 UserResponse respuesta = new UserResponse();
                 respuesta.setFirstName(u.getFirstName());
@@ -42,7 +42,7 @@ public class UserService {
                 respuesta.setDateOfBirth(u.getDateOfBirth());
                 return ResponseEntity.ok(respuesta);
             } else {
-                //log.info("{} is not valid password for user {}", command.getPassword(), user.getId());
+                log.info("{} is not valid password for user {}", command.getPassword(), u.getId());
 
                 return ResponseEntity.badRequest().body(buildNotifyResponse("Proceso no válido. "));
             }
@@ -55,15 +55,15 @@ public class UserService {
 
 
     public ResponseEntity<Object> register(UserSignUpCommand command) { //SE ENCARGA DE REGISTRAR TODOS LOS USUARIOS
-        //log.debug("About to be processed [{}]", command);
+        log.debug("About to be processed [{}]", command);
 
         if (userRepository.existsByEmail(command.getEmail())) {
-            //log.info("La dirección de correo {} ya se encuentra en la base de datos.", command.getEmail());
+            log.info("La dirección de correo {} ya se encuentra en la base de datos.", command.getEmail());
 
             return ResponseEntity.badRequest().body(buildNotifyResponse("El usuario ya se encuentra registrado en el sistema."));
         } else {
             if (!command.getPassword().equals(command.getConfirmationPassword())) {
-                //    log.info("The passwords are not equal");
+                    log.info("The passwords are not equal");
                 return ResponseEntity.badRequest().body(buildNotifyResponse("Las contrasenas no coinciden"));
             } else {
                 User user = new User();
@@ -78,7 +78,7 @@ public class UserService {
 
                 userRepository.save(user);
 
-                //  log.info("Registered user with ID={}", user.getId());
+                  log.info("Registered user with ID={}", user.getId());
 
                 return ResponseEntity.ok().body(buildNotifyResponse("Usuario registrado."));
             }
@@ -89,9 +89,9 @@ public class UserService {
 
 
     public ResponseEntity<Object> update(UserChangingAttributesCommand command, String id) {
-        // log.debug("About to process [{}]", command);
+         log.debug("About to process [{}]", command);
         if (!userRepository.existsById(Long.parseLong(id))) {
-            // log.info("Cannot find user with ID={}", id);
+             log.info("Cannot find user with ID={}", id);
             return ResponseEntity.badRequest().body(buildNotifyResponse("id invalido"));
         } else {
             User user = new User();
@@ -104,7 +104,7 @@ public class UserService {
             user.setDateOfBirth(command.getDateOfBirth());
             userRepository.save(user);
 
-            //   log.info("Updated user with ID={}", user.getId());
+               log.info("Updated user with ID={}", user.getId());
 
             return ResponseEntity.ok().body(buildNotifyResponse("La operación ha sido exitosa."));
         }
@@ -118,7 +118,7 @@ public class UserService {
         respuesta.setTimestamp(LocalDateTime.now());
         return respuesta;
     }
-    
+
 }
 
 
